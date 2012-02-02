@@ -62,4 +62,6 @@ alias stop_couch='/usr/bin/sudo launchctl unload /Library/LaunchDaemons/org.apac
 # rsync -avz mouser quinn@session01:~
 # application: waterforwardcharity-dev
 
-
+if test "$HOSTNAME" == 'quinnbaetz' ; then
+    echo "hi"
+fi
