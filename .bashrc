@@ -18,6 +18,9 @@ function torrent {
 }
 # rsync -avz mouser quinn@session01:~
 # application: waterforwardcharity-dev
+function kill-zombies {
+    kill -HUP `ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | awk '{print $2}'`
+}
 
 if test "$HOSTNAME" == 'quinnbaetz' ; then
     source ~/dev/quinnsdots/.bashrcserver
