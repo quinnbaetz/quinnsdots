@@ -1,6 +1,11 @@
 
 #../bin/deploy.sh --set-default
 #./bin/mkdeploy.sh dev
+#possible fix for slow usb drive
+#  rmmod ehci_hcd
+#  rmmod uhci_hcd
+#  modprobe ehci_hcd
+#  modprobe uhci_hcd
 
 function qkill {
     kill `ps axu | grep $1 | awk '{print $2}'`
