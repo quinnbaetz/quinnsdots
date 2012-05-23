@@ -7,18 +7,55 @@
       alias mysqladmin=/usr/local/mysql/bin/mysqladmin
  
  export PATH=$PATH:/usr/local/sbin:/usr/local/mysql/bin
+ export PATH=/usr/local/bin:$PATH
+ #make sure this is being set correctly
  export PYTHONPATH=/Users/quinn/dev/Z3:/Users/quinn/dev/Z3/search:/Users/quinn/dev/tornado:$PYTHONPATH
  export TERM=xterm
  export Z3_ENV=local
  export JOLITICS=$HOME/dev/Z3/jolitics
- 
- alias jolitics-start="(cd $HOME/dev/Z3/jolitics && ./jolitics.py --config=/Users/quinn/dev/Z3/jolitics/conf/local/jolitics.quinn.cfg)"
- alias zuno-start="(cd $HOME/dev/Z3/zuno && ./zuno.py --config=/Users/quinn/dev/Z3/zuno/conf/local/zuno.peleus.cfg)"
- 
+
+ #ssh-agent bash; ssh-add ~/.ssh/id_rsa
+
+ function backup {
+    mysqldump -u root movies | gzip > /Users/quinn/Google\ Drive/backups/database_`date +%w`.sql.gz
+ }
+ function dropt-start {
+    cd ~/dev/dropt/
+    . ~/.virtualenvs/dropt/bin/activate
+    export VIRTUAL_ENV=quinn
+    redis-server &
+    schema -a image_worker -e local
+    cd ~/dev/dropt/image_worker/
+    python img_worker.py &
+    cd ~/dev/dropt/
+    npm run-script startmon
+ }
+ #Remember to run sqlevol when updating if getting errors
+ function jolitics-start {
+    sudo pkill nginx
+    sudo /usr/local/sbin/nginx -c /etc/nginx/nginx_jolitics.conf
+    sudo ~/dev/config/memcached/files/start-memcached-jolitics
+    redis-server ~/dev/Z3/jolitics/conf/local/redis.conf
+
+    cd $HOME/dev/Z3/jolitics
+    python2.6 ./web.py --config=/Users/quinn/dev/Z3/jolitics/conf/local/jolitics.quinn.cfg
+}
+ alias sub="/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl"
+#launchctl stop io.redis.redis-server
+function zuno-start {
+    #sudo pkill nginx
+    #sudo /usr/local/sbin/nginx -c /Users/quinn/dev/config/zuno/files/nginx_quinn_local.conf
+    sudo ~/dev/config/memcached/files/start-memcached-zuno
+    redis-server ~/dev/Z3/zuno/conf/local/redis.conf
+    cd $HOME/dev/Z3/zuno
+    python2.6 ./zuno.py --config=/Users/quinn/dev/Z3/zuno/conf/local/zuno.quinn.cfg
+}
+ #EDIT /etc/nginx/nginx.conf when switching projects
+ alias nginx-conf="vim /etc/nginx/nginx.conf"
  alias nginx-star="sudo /usr/local/sbin/nginx -c /etc/nginx/nginx.conf"
  alias nginx-start="launchctl load -w ~/Library/LaunchAgents/org.nginx.nginx.plist"
  alias nginx-stop="launchctl unload ~/Library/LaunchAgents/org.nginx.nginx.plist"
- 
+alias clear-memcache="echo flush_all | nc localhost 11213" 
  function jslint {
      #rhino /Users/quinn/Library/jslint/jslint.js $1
      rhino /Users/quinn/dev/fulljslint.js $1
