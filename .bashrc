@@ -1,6 +1,11 @@
 
 #../bin/deploy.sh --set-default
 #./bin/mkdeploy.sh dev
+#possible fix for slow usb drive
+#  rmmod ehci_hcd
+#  rmmod uhci_hcd
+#  modprobe ehci_hcd
+#  modprobe uhci_hcd
 
 function qkill {
     kill `ps axu | grep $1 | awk '{print $2}'`
@@ -21,6 +26,9 @@ function torrent {
 alias googlecode_submit="svn commit --username quinnbaetz@gmail.com --password Ms6eB8Cz5Qv6"
 # rsync -avz mouser quinn@session01:~
 # application: waterforwardcharity-dev
+function kill-zombies {
+    kill -HUP `ps -A -ostat,ppid,pid,cmd | grep -e '^[Zz]' | awk '{print $2}'`
+}
 
 if test "$HOSTNAME" == 'quinnbaetz' ; then
     echo "setting up server environment"
